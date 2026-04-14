@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>∞</title>
+    <style>
+        body { background-color: #000; color: #0f0; font-family: monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        #m { border: 1px solid #111; padding: 40px; width: 85vw; height: 70vh; white-space: pre-wrap; outline: none; word-wrap: break-word; font-size: 1.2rem; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div id="m" contenteditable="true"></div>
+    <script>
+        const e = document.getElementById('m');
+        const g = ["†","ø","æ","§","@","#","$","%","&","*","¶","Ξ","Ω","Ψ","Σ"];
+        
+        if(localStorage.getItem('s')) e.innerText = localStorage.getItem('s');
+        
+        e.addEventListener('input', () => localStorage.setItem('s', e.innerText));
+
+        setInterval(() => {
+            let t = e.innerText.split('');
+            let indices = [];
+            
+            for(let n=0; n<t.length; n++) {
+               
+                if(t[n] !== " " && t[n] !== "\n" && !g.includes(t[n])) {
+                    indices.push(n);
+                }
+            }
+            
+            if (indices.length > 0) {
+        
+                const selection = window.getSelection();
+                const range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+                const offset = range ? range.startOffset : 0;
+
+                let x = indices[Math.floor(Math.random() * indices.length)];
+                t[x] = g[Math.floor(Math.random() * g.length)];
+                e.innerText = t.join('');
+                localStorage.setItem('s', e.innerText);
+
+               
+                if (range && document.activeElement === e) {
+                    const newRange = document.createRange();
+                    newRange.setStart(e.childNodes[0] || e, offset);
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+                }
+            }
+        }, 15000);
+    </script>
+</body>
+</html>
